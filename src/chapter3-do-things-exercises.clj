@@ -4,7 +4,7 @@
 
 ; 1. Use the str, vector, list, hash-map, and hash-set functions.
 
-(str "hello")
+(str "hello world")
 (str 123)
 (str "hello" "hi")
 
@@ -65,10 +65,31 @@
 ; to work with weird space aliens with radial symmetry. Instead of two eyes, 
 ; arms, legs, and so on, they have five.
 
+(def asym-hobbit-body-parts [{:name "head" :size 3}
+                            {:name "part1-eye" :size 1}
+                            {:name "part1-ear" :size 1}
+                            {:name "mouth" :size 1}
+                            {:name "nose" :size 1}
+                            {:name "neck" :size 2}
+                            {:name "part1-shoulder" :size 3}
+                            {:name "part1-upper-arm" :size 3}
+                            {:name "chest" :size 10}
+                            {:name "back" :size 10}
+                            {:name "part1-forearm" :size 3}
+                            {:name "abdomen" :size 6}
+                            {:name "part1-kidney" :size 1}
+                            {:name "part1-hand" :size 2}
+                            {:name "part1-knee" :size 2}
+                            {:name "part1-thigh" :size 4}
+                            {:name "part1-lower-leg" :size 3}
+                            {:name "part1-achilles" :size 1}
+                            {:name "part1-foot" :size 2}])
+
 (defn matching-part
-  [part]
-  {:name (clojure.string/replace (:name part) #"^left-" "right-")
-   :size (:size part)})
+  [part part-number]
+  (let [part-name (clojure.string/replace (:name part) #"^part1-" (str "part" part-number "-"))]
+    {:name part-name
+     :size (:size part)}))
 
 (defn symmetrize-body-parts
   "Expects a seq of maps that have a :name and :size"
@@ -80,5 +101,7 @@
       (let [[part & remaining] remaining-asym-parts]
         (recur remaining
                (into final-body-parts
-                     (set [part (matching-part part)])))))))
+                     (set [part (matching-part part 2) (matching-part part 3) (matching-part part 4) (matching-part part 5)])))))))
+
+
 
