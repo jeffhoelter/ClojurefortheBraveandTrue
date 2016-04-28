@@ -103,5 +103,17 @@
                (into final-body-parts
                      (set [part (matching-part part 2) (matching-part part 3) (matching-part part 4) (matching-part part 5)])))))))
 
+(defn symmetrize-body-parts-nums
+  "Expects a seq of maps that have a :name and :size"
+  [asym-body-parts number]
+  (loop [remaining-asym-parts asym-body-parts
+         final-body-parts []]
+    (if (empty? remaining-asym-parts)
+      final-body-parts
+      (let [[part & remaining] remaining-asym-parts]
+        (recur remaining
+               (into final-body-parts
+                     (set [part (vec (map chapter3/matching-part (repeat part) (range 2 (inc number))))])))))))
+
 
 
