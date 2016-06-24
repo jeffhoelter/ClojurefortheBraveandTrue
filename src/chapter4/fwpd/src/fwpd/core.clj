@@ -45,7 +45,6 @@
   [minimum-glitter records]
   (map :name (filter #(>= (:glitter-index %) minimum-glitter) records)))
 
-
 ; Chapter 4 - Exercise 2
 ; Write a function, append, which will append a new suspect to
 ; your list of suspects.
@@ -75,6 +74,6 @@
 
 (defn write-maps-to-file
   [filename maps-to-write]
-  (spit filename (clojure.string/join ", " (flatten (map vals maps-to-write)))))
+  (spit filename (clojure.string/join "\n" (map #(clojure.string/join "," %) (map vals maps-to-write)))))
 
 
