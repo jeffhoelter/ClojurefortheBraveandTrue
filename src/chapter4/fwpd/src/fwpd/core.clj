@@ -76,4 +76,4 @@
   [filename maps-to-write]
   (spit filename (clojure.string/join "\n" (map #(clojure.string/join "," %) (map vals maps-to-write)))))
 
-
+; (fwpd.core/write-maps-to-file fwpd.core/output-filename (fwpd.core/mapify (fwpd.core/parse (slurp fwpd.core/filename))))
