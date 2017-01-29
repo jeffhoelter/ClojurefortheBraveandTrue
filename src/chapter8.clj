@@ -31,13 +31,6 @@
           {}
           validations))
 
-(defmacro if-valid
-  "Handle validation more concisely"
-  [to-validate validations errors-name & then-else]
-  `(let [~errors-name (validate ~to-validate ~validations)]
-     (if (empty? ~errors-name)
-       ~@then-else)))
-
 ; (if-valid order-details order-details-validations my-error-name
 ;             (println :success)
 ;             (println :failure my-error-name))
@@ -82,7 +75,6 @@
 (defmacro defattrs
   [& attribute-function-pairs]
   (map #(println (first %) (second %)) (partition 2 (vec attribute-function-pairs))))
-
 
 (defattrs c-int :intelligence c-str :strength c-dex :dexterity)
 
