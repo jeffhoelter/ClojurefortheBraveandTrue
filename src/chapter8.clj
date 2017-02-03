@@ -76,6 +76,19 @@
   [& attribute-function-pairs]
   (map #(println (first %) (second %)) (partition 2 (vec attribute-function-pairs))))
 
+
+ (defmacro defattrs
+   ([] nil)
+   ([fn-name attr]
+    `(def ~fn-name (comp ~attr :attributes))
+   )
+   ([fn-name attr & rest]
+    `(do
+       (defattrs ~fn-name ~attr)
+       (defattrs ~@rest))
+    )
+   )
+
 (defattrs c-int :intelligence c-str :strength c-dex :dexterity)
 
 (macroexpand '(defattrs c-int :intelligence c-str :strength c-dex :dexterity))
