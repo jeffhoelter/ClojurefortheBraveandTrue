@@ -75,19 +75,19 @@
 ;;                 (quote-word-count 5)
 ;;                 ; => {"ochre" 8, "smoothie" 2}
 
-(slurp "http://www.braveclojure.com/random-quote")
+(require '[clojure.string :as str])
 
 (defn slurp-brave-into-frequencies-map
-  []
+  [noop]
   (frequencies (str/split (slurp "http://www.braveclojure.com/random-quote") #" ")))
 
 (defn quote-word-count
   [count]
-  (repeatedly count (slurp-brave-into-frequencies-map)))
-(quote-word-count 5)
+  (let [futures-list (doall (map #(future (slurp-brave-into-frequencies-map %)) (range count)))
+        contents (map deref futures-list)]
+    (apply merge-with + contents)))
 
-
-
+;; (quote-word-count 25)
 
 
 ;; 3. Create representations of two characters in a game. The
@@ -95,3 +95,28 @@
 ;; second character has a healing potion in his inventory.
 ;; Use refs and transactions to model the consumption of the
 ;; healing potion and the first character healing.
+
+
+(def injured-character (ref {:name "Needful" :hit-points 15 :hit-points-max 40}))
+
+(def healer-character (ref {:name "Healer" :hit-points 40 :hit-points-max 40 :potion-available-healing-points 100}))
+
+(defn calculate-additional-hit-points
+  "This will return the number of points of healing that will occur."
+  [current-points max-points healing-points-available]
+  (let [needed-points (- max-points current-points)]
+    (if (> needed-points healing-points-available)
+      healing-points-available
+      needed-points)))
+
+(defn heal-character
+  [injured healer]
+  (dosync
+   (when (and (> (:potion-available-healing-points @healer) 0) (< (:hit-points @injured) (:hit-points-max @injured)))
+     (let [healing-hit-points-to-apply (calculate-additional-hit-points (:hit-points @injured) (:hit-points-max @injured) (:potion-available-healing-points @healer))]
+       (alter injured update-in [:hit-points] + healing-hit-points-to-apply)
+       (alter healer update-in [:potion-available-healing-points] - healing-hit-points-to-apply)))))
+
+(heal-character injured-character healer-character)
+@injured-character
+@healer-character
