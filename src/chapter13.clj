@@ -29,6 +29,55 @@
 
 ;; 2. Create a WereSimmons record type, and then extend the WereCreature protocol.
 
+
+(defprotocol WereCreature
+  (full-moon-behavior [x]))
+(defrecord WereWolf [name title] WereCreature
+            (full-moon-behavior [x]
+              (str name " will howl and murder")))
+(defrecord WereSimmons [name title] WereCreature
+            (full-moon-behavior [x]
+              (str name " has wild and crazy hair")))
+
+
 ;; 3. Create your own protocol, and then extend it using extend-type and extend-protocol.
 
+(defprotocol ApplianceProtocol
+  (process [x]))
+
+(extend-type java.lang.Object
+  ApplianceProtocol
+  (process
+    ([x] "meh")
+    ([x y] (str "meh about " y))))
+
+
+(extend-protocol ApplianceProtocol
+  java.lang.String
+  (process
+    ([x] "meh2")
+    ([x y] (str "meh2 about " y))))
+
+
 ;; 4. Create a role-playing game that implements behavior using multiple dispatch.
+
+;; Incidentally, this is why they’re called multimethods: they allow dis- patch on multiple arguments. I haven’t used this feature very often, but I could see it being used in a role-playing game to write methods that are dispatched according to, say, a mage’s major school of magic and his magic specialization. Either way, it’s better to have it and not need it than need it and not have it.
+
+
+(defmulti cast-spell (fn [mage victim] (:mage-type mage)))
+
+(defmethod cast-spell :summoner
+  [mage victim]
+  (str "Summoner mage " (:name mage) " casts a spell on " (:name victim)))
+
+(defmethod cast-spell :white-mage
+  [mage victim]
+  (str "White mage " (:name mage) " casts a spell on " (:name victim)))
+
+(cast-spell {:mage-type :summoner
+             :name "Archdeacon Gotham"}
+            {:name "Poor Victim"})
+
+(cast-spell {:mage-type :white-mage
+             :name "Lord Voldemort"}
+            {:name "Harry Potter"})
