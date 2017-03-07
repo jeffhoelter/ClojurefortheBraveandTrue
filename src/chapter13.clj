@@ -61,9 +61,6 @@
 
 ;; 4. Create a role-playing game that implements behavior using multiple dispatch.
 
-;; Incidentally, this is why they’re called multimethods: they allow dis- patch on multiple arguments. I haven’t used this feature very often, but I could see it being used in a role-playing game to write methods that are dispatched according to, say, a mage’s major school of magic and his magic specialization. Either way, it’s better to have it and not need it than need it and not have it.
-
-
 (defmulti cast-spell (fn [mage victim] (:mage-type mage)))
 
 (defmethod cast-spell :summoner
